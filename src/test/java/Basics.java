@@ -3,12 +3,16 @@ import io.restassured.RestAssured;
 import io.restassured.path.json.JsonPath;
 import org.testng.Assert;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
 public class Basics {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         //validate if Add Place API is working as expected
         RestAssured.baseURI = "https://rahulshettyacademy.com";
@@ -27,6 +31,18 @@ public class Basics {
         JsonPath js = new JsonPath(response);
         String placeId = js.getString("place_id");
         String updatedAddress = "70 winter walk, USA";
+
+        //Add place by using external JSON file
+        given()
+            .log().all()
+            .queryParam("key", "qaclick123")
+            .header("Content-Type", "application/json")
+            .body(new String(Files.readAllBytes(Paths.get("src/test/java/files/AddPlace.json"))))
+        .when()
+            .post("/maps/api/place/add/json")
+        .then()
+                .log().all().assertThat().statusCode(200).body("scope", equalTo("APP"))
+                .header("Server", "Apache/2.4.52 (Ubuntu)");
 
         //Update place with new address
         given()

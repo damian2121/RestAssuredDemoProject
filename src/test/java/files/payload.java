@@ -48,4 +48,14 @@ public class payload {
                   ]
                 }""";
     }
+
+    public static String AddBook(String aisle, String isbn) {
+        return """
+                {
+                  "name": "Learn RestAssured Automation with Java",
+                  "isbn": "%s",
+                  "aisle": "%s",
+                  "author": "John Pork"
+                }""".formatted(isbn, aisle);
+    }
 }
